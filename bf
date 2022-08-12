@@ -1,4 +1,1 @@
-while true do wait(0) 
-
-local A_1 = "gay" local A_2 = "All" 
-local Event = game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest Event:FireServer(A_1, A_2) end
+LJ¿  	 Q €4   '  > %  % 4  7% >77 7   >T íG  FireServerSayMessageRequest DefaultChatSystemChatEventsReplicatedStorageGetService	gameAllgay	wait 
