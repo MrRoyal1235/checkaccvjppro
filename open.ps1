@@ -26,13 +26,6 @@ function Wait-ForInternet {
     }
 }
 
-function Add-ToTaskScheduler {
-    $scriptPath = $MyInvocation.MyCommand.Definition
-    $taskName = "RunMyScript"
-
-    schtasks.exe /create /tn $taskName /tr "powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$scriptPath`"" /sc onlogon /rl highest /f
-}
-
 function Add-ToRegistry {
     $scriptPath = $MyInvocation.MyCommand.Definition
     $regPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
